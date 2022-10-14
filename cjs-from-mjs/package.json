@@ -1,9 +1,9 @@
 {
-  "name": "mjs-to-cjs",
+  "name": "cjs-from-mjs",
   "version": "1.0.0-alpha.1",
   "description": "",
-  "main": "mjs-to-cjs.js",
-  "exports": "./mjs-to-cjs.js",
+  "main": "cjs-from-mjs.js",
+  "exports": "./cjs-from-mjs.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

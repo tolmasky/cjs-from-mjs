@@ -1,5 +1,5 @@
 const { parse, transformFromAst } = require("@babel/core");
-const MJSToCJSPlugin = require("./mjs-to-cjs-plugin");
+const MJSToCJSPlugin = require("./cjs-from-mjs-plugin");
 
 const DefaultOptions =
 {
@@ -11,7 +11,7 @@ const DefaultOptions =
     }
 };
 
-module.exports = function MJSToCJS(...arguments)
+module.exports = function CJSFromMJS(...arguments)
 {
     const code = arguments.length === 2 ?
         arguments[1] :
