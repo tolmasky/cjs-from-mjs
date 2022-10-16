@@ -41,20 +41,28 @@ const hasTopLevelAwait = AST =>
     findAtTopLevel(["AwaitExpression"], AST).AwaitExpression;
 
 // default and function name === null
-const toCJSExports = (t, exportDeclaration) =>
-    exportDeclaration.type === "ExportDefaultDeclaration" ?
-        [
-            exportDeclaration.declaration,
-            t.ExpressionStatement(
-                t.AssignmentExpression(
-                    "=",
-                    t.MemberExpression(
-                        t.Identifier("module"),
-                        t.Identifier("exports")),
-                    exportDeclaration.declaration.id))
-        ] :
-        [(console.log("here:", exportDeclaration),
-        exportDeclaration)];
+const toMemberExpression = (t, names) => names
+    .filter(name => !!name)
+    .map(name => typeof name === "string" ? t.Identifier(name) : name)
+    .reduce((lhs, rhs) => t.MemberExpression(lhs, rhs));
+
+const toExportAssignment = (t, named, id) =>
+    t.ExpressionStatement(
+        t.AssignmentExpression(
+            "=",
+            toMemberExpression(t, ["module", "exports", named && id]),
+            id));
+
+// default and function name === null
+const toCJSExports = (
+    t,
+    { declaration, type },
+    isDefaultExport = type === "ExportDefaultDeclaration") =>
+[
+    declaration,
+    ...(isDefaultExport ? [declaration] : declaration.declarations)
+        .map(({ id }) => toExportAssignment(t, !isDefaultExport, id))
+];
 
 const isRequire = (t, node) =>
     t.isCallExpression(node) &&
@@ -77,7 +85,15 @@ module.exports = ({ types: t }) =>
         MemberExpression: path => void(
             isMetaMember(t, "url", path.node) &&
             path.replaceWith(t.Identifier("__filename"))),
-    
+
+        NewExpression: path => void(
+            t.isIdentifier(path.node.callee, { name: "URL" }) &&
+            path.node.arguments.length === 2 &&
+            isMetaMember(t, "url", path.node.arguments[1]) &&
+            path.replaceWith(t.CallExpression(
+                t.Identifier("join"),
+                [t.Identifier("__dirname"), path.node.arguments[0]]))),
+
         Program:
         {
             exit(path, state)
