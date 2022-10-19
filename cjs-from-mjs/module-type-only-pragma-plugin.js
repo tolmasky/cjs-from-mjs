@@ -1,19 +1,21 @@
 const { assign, fromEntries } = Object;
 const ModuleTypes = require("./module-types");
-const hasLeadingPragma = require("./had-leading-pragma");
 
-const ModuleInverse = fromEntries(ModuleTypes
+
+const ModuleTypeInverses = fromEntries(ModuleTypes
     .map((name, index) => [name, ModuleTypes[ModuleTypes.length - index - 1]]));
-
-const hasModuleTypeOnlyPragma = fromEntries(ModuleTypes
-    .map(name => [name, hasLeadingPragma(`${name}-only`)]));
-
-const ModuleTypeOnlyPragmaRegExp = fromEntries(ModuleTypes
-    .map(name => [name, new RegExp(`^\\s*@pragma\\s+${name}-only(?:\\s|$)`)]));
 
 const CommentNodeTypes =
     ["leadingComments", "trailingComments", "innerComments"];
 
+const toModuleTypeOnlyCommentPredicate = type => given((
+    PragmaRegExp = new RegExp(`^\\s*@pragma\\s+${type}-only(?:\\s|$)`)) =>
+        comment => PragmaRegExp.test(comment.value));
+
+const ModuleTypeOnlyCommentPredicates = fromEntries(ModuleTypes
+    .map(type => [type, toModuleTypeOnlyCommentPredicate(type)]));
+const isModuleTypeOnlyComment =
+    toModuleTypeOnlyCommentPredicate(`(${ModuleTypes.join("|")})`);
 
 module.exports = ({ types: t }) =>
 ({
@@ -23,14 +25,22 @@ module.exports = ({ types: t }) =>
         {
             const { moduleType } = state.opts;
             const { node } = path;
-            const removeCommentPragmaRegExp =
-                ModuleTypeOnlyPragmaRegExp[moduleType];
+            const isExcludedModuleTypeOnlyComment =
+                ModuleTypeOnlyCommentPredicates[ModuleTypeInverses[moduleType]];
+
+            if (node.leadingComments &&
+                node.leadingComments.some(isExcludedModuleTypeOnlyComment))
+            {
+                for (const type of CommentNodeTypes)
+                    node[type] = null;
+
+                return path.remove();
+            }
 
             for (const type of CommentNodeTypes)
                 if (node[type])
                     node[type] = node[type]
-                        .filter(comment =>
-                            !removeCommentPragmaRegExp.test(comment.value));
+                        .filter(comment => !isModuleTypeOnlyComment(comment));
         }
     }
 });
