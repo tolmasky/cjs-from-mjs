@@ -11,7 +11,7 @@ const CommentNodeTypes =
     ["leadingComments", "trailingComments", "innerComments"];
 
 const toModuleTypeOnlyCommentPredicate = type => given((
-    PragmaRegExp = new RegExp(`^\\s*@pragma\\s+${type}-only(?:\\s|$)`)) =>
+    PragmaRegExp = new RegExp(`^\\s*@pragma\\s+${type} only(?:\\s|$)`)) =>
         comment => PragmaRegExp.test(comment.value));
 
 const ModuleTypeOnlyCommentPredicates = fromEntries(ModuleTypes
