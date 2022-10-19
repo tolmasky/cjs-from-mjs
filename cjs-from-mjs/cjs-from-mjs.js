@@ -1,4 +1,6 @@
 const { parse, transformFromAst } = require("@babel/core");
+
+const ModuleTypeOnlyPragmaPlugin = require("./module-type-only-pragma-plugin");
 const CJSFromMJSPlugin = require("./cjs-from-mjs-plugin");
 
 const DefaultOptions =
@@ -25,6 +27,10 @@ module.exports = function CJSFromMJS(...arguments)
     return transformFromAst(AST, code,
     {
         ...DefaultOptions,
-        plugins: [CJSFromMJSPlugin]
+        plugins:
+        [
+            [ModuleTypeOnlyPragmaPlugin, { moduleType: "cjs" }],
+            CJSFromMJSPlugin
+        ]
     }).code;
 }

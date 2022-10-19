@@ -1,4 +1,6 @@
+const given = f => f();
 const { assign, fromEntries } = Object;
+
 const ModuleTypes = require("./module-types");
 
 
