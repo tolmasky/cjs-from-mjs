@@ -24,13 +24,18 @@ module.exports = function CJSFromMJS(...arguments)
 
     const AST = arguments[0];
 
-    return transformFromAst(AST, code,
-    {
-        ...DefaultOptions,
-        plugins:
+    return Object.fromEntries(["cjs", "mjs"]
+        .map(moduleType =>
         [
-            [ModuleTypeOnlyPragmaPlugin, { moduleType: "cjs" }],
-            CJSFromMJSPlugin
-        ]
-    }).code;
+            moduleType,
+            transformFromAst(AST, code,
+            {
+                ...DefaultOptions,
+                plugins:
+                [
+                    [ModuleTypeOnlyPragmaPlugin, { moduleType }],
+                    moduleType === "cjs" && CJSFromMJSPlugin
+                ].filter(x => !!x)
+            }).code
+        ]));
 }
