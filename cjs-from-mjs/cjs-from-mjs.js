@@ -1,5 +1,6 @@
 const { parse, transformFromAst } = require("@babel/core");
 
+const ModuleTypes = require("./module-types");
 const ModuleTypeOnlyPragmaPlugin = require("./module-type-only-pragma-plugin");
 const CJSFromMJSPlugin = require("./cjs-from-mjs-plugin");
 
@@ -24,7 +25,7 @@ module.exports = function CJSFromMJS(...arguments)
 
     const AST = arguments[0];
 
-    return Object.fromEntries(["cjs", "mjs"]
+    return Object.fromEntries(ModuleTypes
         .map(moduleType =>
         [
             moduleType,
@@ -39,3 +40,5 @@ module.exports = function CJSFromMJS(...arguments)
             }).code
         ]));
 }
+
+module.exports.ModuleTypes = ModuleTypes;
