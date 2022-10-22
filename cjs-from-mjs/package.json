@@ -1,6 +1,6 @@
 {
   "name": "cjs-from-mjs",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "description": "",
   "main": "cjs-from-mjs.js",
   "exports": "./cjs-from-mjs.js",
