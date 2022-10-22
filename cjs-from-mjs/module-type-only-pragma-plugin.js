@@ -36,6 +36,15 @@ module.exports = ({ types: t }) =>
                 for (const type of CommentNodeTypes)
                     node[type] = null;
 
+                const next = path.getNextSibling();
+
+                if (next && next.node.leadingComments)
+                    next.node.leadingComments = next
+                        .node
+                        .leadingComments
+                        .filter(comment =>
+                            comment.loc.start.line > node.loc.end.line);
+
                 return path.remove();
             }
 
