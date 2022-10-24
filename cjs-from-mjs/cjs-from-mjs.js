@@ -4,6 +4,10 @@ const ModuleTypes = require("./module-types");
 const ModuleTypeOnlyPragmaPlugin = require("./module-type-only-pragma-plugin");
 const CJSFromMJSPlugin = require("./cjs-from-mjs-plugin");
 
+const { format } = require("prettier");
+const prettier = code => format(code, { parser: "babel" });
+
+
 const DefaultOptions =
 {
     retainLines: true,
@@ -29,7 +33,7 @@ module.exports = function CJSFromMJS(...arguments)
         .map(moduleType =>
         [
             moduleType,
-            transformFromAst(AST, code,
+            prettier(transformFromAst(AST, code,
             {
                 ...DefaultOptions,
                 plugins:
@@ -37,7 +41,7 @@ module.exports = function CJSFromMJS(...arguments)
                     [ModuleTypeOnlyPragmaPlugin, { moduleType }],
                     moduleType === "cjs" && CJSFromMJSPlugin
                 ].filter(x => !!x)
-            }).code
+            }).code)
         ]));
 }
 

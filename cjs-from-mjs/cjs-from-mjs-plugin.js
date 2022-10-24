@@ -1,3 +1,4 @@
+const { assign } = Object;
 const findAtTopLevel = require("./find-at-top-level");
 
 
@@ -7,12 +8,14 @@ const toRequireExpression = (t, awaitImportCallExpression) =>
         awaitImportCallExpression.argument.arguments);
 
 const toRequireDeclaration = (t, importDeclaration) =>
-    t.VariableDeclaration("const", [
-        t.VariableDeclarator(
-            toPattern(t, importDeclaration.specifiers),
-            t.CallExpression(
-                t.Identifier("require"),
-                [importDeclaration.source]))]);
+    assign(
+        t.VariableDeclaration("const", [
+            t.VariableDeclarator(
+                toPattern(t, importDeclaration.specifiers),
+                t.CallExpression(
+                    t.Identifier("require"),
+                    [importDeclaration.source]))]),
+        { loc: importDeclaration.loc });
 
 const toPattern = (t, specifiers) =>
     t.isImportDefaultSpecifier(specifiers[0]) ?

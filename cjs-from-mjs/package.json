@@ -11,7 +11,8 @@
   "author": "Francisco Ryan Tolmasky I <tolmasky@gmail.com> (https://tolmasky.com/)",
   "license": "MIT",
   "peerDependencies": {
-    "@babel/core": "^7.19.3"
+    "@babel/core": "^7.19.3",
+    "prettier": "^2.7.1"
   },
   "homepage": "https://github.com/tolmasky/cjs-from-mjs#readme",
   "bugs": {
