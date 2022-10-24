@@ -1,7 +1,7 @@
 {
   "name": "cjs-from-mjs",
   "version": "1.0.0-alpha.7",
-  "description": "",
+  "description": "Convert ESM code into idiomatic CommonJS code",
   "main": "cjs-from-mjs.js",
   "exports": "./cjs-from-mjs.js",
   "scripts": {
@@ -12,5 +12,13 @@
   "license": "MIT",
   "peerDependencies": {
     "@babel/core": "^7.19.3"
+  },
+  "homepage": "https://github.com/tolmasky/cjs-from-mjs#readme",
+  "bugs": {
+    "url": "https://github.com/tolmasky/cjs-from-mjs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tolmasky/cjs-from-mjs"
   }
 }
